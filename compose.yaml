@@ -1,7 +1,8 @@
 services:
   tests:
-    # TODO by students: create own tests image using separate Dockerfile
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.tests
     container_name: tests-server
     depends_on:
       api-mock:
@@ -13,18 +14,21 @@ services:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
 #  infinite loop to run container
-    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
+#    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
+    command: ["pytest", "-v", "/opt/project/tests"]
 #    entrypoint: ["ping", "-c", "5", "api-mock-server"]
 
   api-mock:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: api-mock-server
     restart: always
     volumes:
       - api_mock_certs:/root/ca/rsa/volumed_dir
     ports:
       - "8080:80"
-      - "8443:443"
+      - "8443:443"    
 
   mock-database:
     image: postgres:latest

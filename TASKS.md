@@ -77,7 +77,7 @@ URL [https://github.com/waad19/mock-api-server](https://github.com/waad19/mock-a
 > Updated task section
 
 - Investigate [inventory_files.py](app/routes/inventory_files.py) endpoints that return HTTPS encryption certificates.
-- Investiagte how `requests` library can be configured to trust self-signed HTTPS certificates.
+- Investigate how `requests` library can be configured to trust self-signed HTTPS certificates.
 - Modify your Python tests to use either HTTP or HTTPS backend with appropriate configuration.
     - You can use JSON configuration file a boolean value to either enable or disable HTTPS and its configuration.
 
