@@ -9,13 +9,16 @@ services:
         condition: service_started
     environment:
       - REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
+      - PROTOCOL=https  # 'http' or 'https'
+      - HOST=api-mock  # 'localhost' or 'api-mock'
+      - PORT=443  # Can be 80 or 443 (host: api-mock), also 8080 or 8443(host: localhost), depending on the protocol
     working_dir: /opt/project
     volumes:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
 #  infinite loop to run container
 #    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
-    command: ["pytest", "-v", "/opt/project/tests"]
+    command: ["pytest", "-vv", "/opt/project/tests"]
 #    entrypoint: ["ping", "-c", "5", "api-mock-server"]
 
   api-mock:
@@ -23,7 +26,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api-mock-server
-    restart: always
+    restart: always    
     volumes:
       - api_mock_certs:/root/ca/rsa/volumed_dir
     ports:

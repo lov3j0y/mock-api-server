@@ -17,7 +17,7 @@ ENV REQUESTS_CA_BUNDLE=
 # Ignore warnings during requests calls
 ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
-ENV MOCK_HOSTNAME=api-mock-server
+ENV MOCK_HOSTNAME=api-mock
 
 COPY rsa-cert-generation/create_certs.sh            /root/ca/rsa/create_certs.sh
 COPY rsa-cert-generation/root-openssl.conf          /root/ca/rsa/openssl.cnf

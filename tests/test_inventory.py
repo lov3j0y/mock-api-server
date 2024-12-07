@@ -1,53 +1,18 @@
 import requests
 import pytest
-
-BASE_URL = "http://localhost:8080"
-#BASE_URL = "http://api-mock:80"
-
-default_data = [
-    {
-      "id": "TEST1",
-      "ipAddress": "10.0.49.140",
-      "deviceAddresses": {
-        "fqdn": "test.com",
-        "ipv4Address": "10.0.49.140",
-        "ipv6Address": None
-      },
-      "model": "TEST_DEVICE",
-      "serialNum": "TEST1-1fecaf6a-0619-41b1-86d8-acf36064f9ec",
-      "version": "2.3.12",
-      "build": "20240410.1854-8f4e21frg65t"
-    },
-    {
-      "id": "TEST2",
-      "ipAddress": "10.0.49.141",
-      "deviceAddresses": {
-        "fqdn": "test.com",
-        "ipv4Address": "10.0.49.141",
-        "ipv6Address": "2de4:712b:d13d:d51e:0d5f:3530:1d51:1493"
-      },
-      "model": "TEST_DEVICE",
-      "serialNum": "TEST2-1ghfaf6a-0723-52e1-86d8-acf42055f9eg",
-      "version": "3.0.0",
-      "build": "20240410.1854-8f4e21y111ef-snapshot"
-    }
-]
-
-default_guids= {
-    "guids": []
-  }
+from conftest import *
 
 
-def test_get_inventory_devices():
+def test_get_inventory_devices(verify=CA_BUNDLE):
     """
     Test GET /inventory/devices endpoint to retrieve all devices.
     """
     response = requests.get(f"{BASE_URL}/inventory/devices")
     assert response.status_code == 200
-    assert response.json() == default_data
+    assert response.json() == default_inventory_devices_response['body']
 
 
-def test_update_inventory_devices_with_valid_data(reset_mock_data):
+def test_update_inventory_devices_with_valid_data(verify=CA_BUNDLE):
     """
     Test PUT /inventory/devices endpoint to update the devices response.
     """
@@ -87,7 +52,7 @@ def test_update_inventory_devices_with_valid_data(reset_mock_data):
     assert response.json()["new_body"] == updated_data["body"]
     assert response.json()["new_status_code"] == updated_data["status_code"]
     
-def test_update_inventory_devices_with_invalid_data(reset_mock_data):
+def test_update_inventory_devices_with_invalid_data(verify=CA_BUNDLE):
     """
     Test PUT /inventory/devices endpoint to update the devices response.
     """
@@ -108,16 +73,16 @@ def test_update_inventory_devices_with_invalid_data(reset_mock_data):
     response = requests.put(f"{BASE_URL}/inventory/devices", json=updated_data)
     assert response.status_code == 400
 
-def test_get_guids():
+def test_get_guids(verify=CA_BUNDLE):
     """
     Test GET /guids endpoint to retrieve all GUIDs.
     """     
     response = requests.get(f"{BASE_URL}/guids")
-    expected_response = {"guids": []}
+    expected_response = default_guids_response["body"]
     assert response.status_code == 200
     assert response.json() == expected_response
 
-def test_post_guid_add(reset_mock_data):
+def test_post_guid_add(verify=CA_BUNDLE):
     """
     Test POST /<guid>/add endpoint to add a new GUID.
     """
@@ -132,19 +97,23 @@ def test_post_guid_add(reset_mock_data):
     }
     assert response.json() == guid_add_response["body"]
     
-def test_post_guid_add_duplicated_value(reset_mock_data):
+def test_post_guid_add_duplicated_value(verify=CA_BUNDLE):
     """
     Test POST /<guid>/add endpoint to add a duplicated GUID.
     """
     guid = "123e4567-e89b-12d3-a456-426614174000"
-    guid2 = guid
-    response = requests.post(f"{BASE_URL}/{guid}/add")
-    assert response.status_code == 200
-    guid_response = {
+    get_all_guids = requests.get(f"{BASE_URL}/guids")
+    assert get_all_guids.json() == default_guids_response["body"]
+    assert get_all_guids.status_code == 200
+    requests.post(f"{BASE_URL}/{guid}/add") 
+    requests.post(f"{BASE_URL}/{guid}/add")
+    duplicated_response = {
         "body": {
-            "guids": [guid, guid2]
+            "guids": [guid, guid]
         },
         "status_code": 200
     }
-    assert response.json() == guid_response["body"]
+    current_all_guids = requests.get(f"{BASE_URL}/guids")
+    assert current_all_guids.json() == duplicated_response["body"]
+    assert current_all_guids.status_code == 200
 
