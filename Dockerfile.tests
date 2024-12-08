@@ -3,6 +3,14 @@ USER root
 
 WORKDIR /opt/project
 
+RUN apt-get update && apt-get install -y ca-certificates curl && apt-get clean
+RUN ln -s /root/ca/rsa/volumed_dir/ca-chain.cert.pem /usr/local/share/ca-certificates/ca-chain.crt \
+    && ln -s /root/ca/rsa/volumed_dir/full-chain.cert.pem /usr/local/share/ca-certificates/full-chain.crt \
+    && ln -s /root/ca/rsa/volumed_dir/intermediate.cert.pem /usr/local/share/ca-certificates/intermediate.crt \
+    && ln -s /root/ca/rsa/volumed_dir/mock.cert.pem /usr/local/share/ca-certificates/mock.crt \
+    && update-ca-certificates
+
+
 COPY python_packages.txt /opt/project/python_packages.txt
 RUN pip install --no-cache-dir -r python_packages.txt
 

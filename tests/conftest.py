@@ -30,7 +30,7 @@ GUIDS_FILE = get_default_data_filepath()[1]
 default_inventory_devices_response = load_json_file(INVENTORY_DEVICES_FILE)
 default_guids_response = load_json_file(GUIDS_FILE)
 
-
+load_dotenv()
 def get_base_url():
     protocol = os.getenv("PROTOCOL", "http")  # Defaults to 'http' if not set
     host = os.getenv("HOST", "localhost")  # Defaults to 'localhost' if not set

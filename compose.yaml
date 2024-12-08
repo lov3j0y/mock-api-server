@@ -19,7 +19,6 @@ services:
 #  infinite loop to run container
 #    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
     command: ["pytest", "-vv", "/opt/project/tests"]
-#    entrypoint: ["ping", "-c", "5", "api-mock-server"]
 
   api-mock:
     build:
