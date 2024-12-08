@@ -7,6 +7,8 @@ services:
     depends_on:
       api-mock:
         condition: service_started
+      mock-database:
+        condition: service_started
     environment:
       - REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
       - PROTOCOL=https  # 'http' or 'https'
